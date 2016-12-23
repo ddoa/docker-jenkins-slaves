@@ -52,6 +52,7 @@ RUN chmod 644 /root/.ssh/known_hosts
 ADD known_hosts /home/jenkins/.ssh/known_hosts
 RUN chmod 644 /home/jenkins/.ssh/known_hosts
 RUN chown jenkins /home/jenkins/.ssh/known_hosts
+RUN chown jenkins /home/jenkins/.ssh
 
 # Standard SSH port
 EXPOSE 22
