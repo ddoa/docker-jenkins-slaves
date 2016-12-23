@@ -39,8 +39,8 @@ WORKDIR /data
 RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
     echo "jenkins:jenkins" | chpasswd
 
-RUN apt-get install -y git
-RUN apt-get install -y maven
+RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y maven
 
 # Standard SSH port
 EXPOSE 22
