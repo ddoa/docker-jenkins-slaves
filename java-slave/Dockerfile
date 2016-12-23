@@ -44,8 +44,12 @@ RUN apt-get update && apt-get install -y maven
 
 ADD id_rsa /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/id_rsa
+ADD id_rsa /home/jenkins/.ssh/id_rsa
+RUN chmod 600 /home/jenkins/.ssh/id_rsa
 ADD known_hosts /root/.ssh/known_hosts
 RUN chmod 644 /root/.ssh/known_hosts
+ADD known_hosts /home/jenkins/.ssh/known_hosts
+RUN chmod 644 /home/jenkins/.ssh/known_hosts
 
 # Standard SSH port
 EXPOSE 22
