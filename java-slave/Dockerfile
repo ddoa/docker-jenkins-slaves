@@ -42,6 +42,9 @@ RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
 RUN apt-get update && apt-get install -y git
 RUN apt-get update && apt-get install -y maven
 
+ADD id_rsa /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+
 # Standard SSH port
 EXPOSE 22
 
