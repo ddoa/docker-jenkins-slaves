@@ -1,6 +1,6 @@
 # This Dockerfile is used to build an image containing basic stuff to be used as a Jenkins slave build node.
-FROM ubuntu:trusty
-MAINTAINER Ervin Varga <ervin.varga@gmail.com>
+FROM debian:latest
+MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
 # Upgrade packages on image
