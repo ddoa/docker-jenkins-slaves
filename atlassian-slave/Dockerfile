@@ -49,6 +49,9 @@ RUN apt-get -q update && \
   apt-get -q update && \
   apt-get install -y atlassian-plugin-sdk
 
+# Add this property to Jenkins ENV_INJECT plugin properties because .bashrc and other properties don't get loaded or are loaded for the root user instead of the jenkins user
+ENV ATLAS_HOME /usr/share/atlassian-plugin-sdk-6.2.14
+
 # Standard SSH port
 EXPOSE 22
 
