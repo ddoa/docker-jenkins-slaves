@@ -52,6 +52,11 @@ RUN apt-get -q update && \
 # Add this property to Jenkins ENV_INJECT plugin properties because .bashrc and other properties don't get loaded or are loaded for the root user instead of the jenkins user
 ENV ATLAS_HOME /usr/share/atlassian-plugin-sdk-6.2.14
 
+# Sonar Scanner
+RUN apt-get update && apt-get install -y unzip && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+
+COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
+
 # Standard SSH port
 EXPOSE 22
 

@@ -67,6 +67,11 @@ ENV ANDROID_HOME /opt/android-sdk-linux
 ENV ANDROID_SDK_HOME /opt/android-sdk-linux
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
+# Sonar Scanner
+RUN apt-get update && apt-get install -y unzip && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+
+COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
+
 # Standard SSH port
 EXPOSE 22
 

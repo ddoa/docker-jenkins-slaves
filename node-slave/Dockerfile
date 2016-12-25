@@ -22,11 +22,10 @@ ENV LC_ALL en_US.UTF-8
 # Define working directory.
 WORKDIR /data
 
-# Set user jenkins to the image
-RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
-    echo "jenkins:jenkins" | chpasswd
+RUN apt-get update && apt-get install -y git curl xz-utils man
 
-RUN apt-get update && apt-get install -y git curl xz-utils
+# Set user jenkins to the image
+RUN useradd -m -d /home/jenkins -s /bin/bash jenkins && echo "jenkins:jenkins" | chpasswd
 
 # Node specific
 RUN groupadd --gid 1001 node \
@@ -57,6 +56,14 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+RUN mkdir "/home/jenkins/.npm-packages"
+RUN chown jenkins /home/jenkins/.npm-packages
+
+# Sonar Scanner
+RUN apt-get update && apt-get install -y unzip && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+
+COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Standard SSH port
 EXPOSE 22
