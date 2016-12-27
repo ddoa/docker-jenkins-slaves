@@ -52,7 +52,7 @@ RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
 RUN apt-get -q update && \
   apt-get -y install libapache2-mod-php7.0 \
   php-pear php7.0 php7.0-cgi php7.0-cli php7.0-common \
-  php7.0-fpm php7.0-gd php7.0-json php7.0-mysql php7.0-readline \
+  php7.0-fpm php7.0-gd php7.0-json php7.0-mbstring php7.0-mysql php7.0-readline \
   mysql-client-5.5
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
