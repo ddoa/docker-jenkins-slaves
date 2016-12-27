@@ -54,6 +54,9 @@ RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidge
   tar xvjf wxWidgets-3.1.0.tar.bz2 -C /opt && \
   cd /opt/wxWidgets-3.1.0 && ./configure && make && make install
 
+RUN apt-get -q update && \
+  apt-get -y install cppcheck
+
 # Standard SSH port
 EXPOSE 22
 
