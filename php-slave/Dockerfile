@@ -53,12 +53,13 @@ RUN apt-get -q update && \
   apt-get -y install libapache2-mod-php7.0 \
   php-pear php7.0 php7.0-cgi php7.0-cli php7.0-common \
   php7.0-fpm php7.0-gd php7.0-json php7.0-mbstring php7.0-mysql php7.0-readline \
-  mysql-client-5.5
+  php7.0-xml mysql-client-5.5
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
   php -r "if (hash_file('SHA384', 'composer-setup.php') === '61069fe8c6436a4468d0371454cf38a812e451a14ab1691543f25a9627b97ff96d8753d92a00654c21e2212a5ae1ff36') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
   php composer-setup.php && \
   php -r "unlink('composer-setup.php');"
+RUN ln -s /data/composer.phar /usr/local/bin/composer
 
 # Standard SSH port
 EXPOSE 22
