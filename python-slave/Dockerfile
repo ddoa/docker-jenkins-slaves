@@ -46,7 +46,7 @@ RUN apt-get -q update && apt-get install -y unzip && wget https://sonarsource.bi
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
-RUN apt-get -q update && apt-get install -y software-properties-common python-software-properties python3 python-pip python3-dev
+RUN apt-get -q update && apt-get install -y software-properties-common python-software-properties python3 python-pip python3-dev python3-pip python-virtualenv python3-virtualenv
 
 # Standard SSH port
 EXPOSE 22
