@@ -54,13 +54,6 @@ ENV GOROOT /usr/local/go
 ENV GOPATH /app
 ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
 
-RUN mkdir /app
-RUN mkdir /app/bin
-RUN mkdir /app/src
-RUN mkdir /app/pkg
-RUN mkdir -p /app/src/git.icaprojecten.nl/GroupName/ProjectName/
-COPY . /app/src/git.icaprojecten.nl/GroupName/ProjectName/
-
 # Standard SSH port
 EXPOSE 22
 
