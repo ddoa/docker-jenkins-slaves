@@ -67,16 +67,6 @@ FROM node:7
 RUN mkdir -p /usr/src/app
 # Set the created directory as the working directory
 WORKDIR /usr/src/app
-# Copy the package.json inside the working directory
-COPY package.json /usr/src/app
-# Install required dependencies
-RUN npm install
-# Copy the client application source files. You can use .dockerignore to exlcude files. Works just as .gitignore does.
-COPY . /usr/src/app
-# Open port 4200. This is the port that our development server uses
-EXPOSE 4200
-# Start the application. This is the same as running ng serve.
-CMD ["npm", "start"]
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
