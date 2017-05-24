@@ -57,6 +57,8 @@ RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidge
 RUN apt-get -q update && \
   apt-get -y install cppcheck
 
+RUN apt-get install doxygen
+
 # Standard SSH port
 EXPOSE 22
 
