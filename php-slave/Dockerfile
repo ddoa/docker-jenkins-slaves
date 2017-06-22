@@ -6,7 +6,7 @@ MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 # Upgrade packages on image
 # Preparations for sshd
 run apt-get -q update &&\
-    apt-get install locales && \
+    apt-get install -y locales gnupg2 && \
     DEBIAN_FRONTEND="noninteractive" apt-get -q upgrade -y -o Dpkg::Options::="--force-confnew" --no-install-recommends &&\
     DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends openssh-server &&\
     /usr/sbin/locale-gen en_US.UTF-8 &&\
