@@ -41,11 +41,11 @@ RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial mai
 
 RUN apt-key adv --keyserver pgp.mit.edu --recv-key BA9EF27F
 
-RUN echo "source /opt/ros/lunar/setup.bash" >> ~/.bashrc
-
 # Set user jenkins to the image
-RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
+RUN useradd -m -d /home/jenkins -s /bin/bash jenkins &&\
     echo "jenkins:jenkins" | chpasswd
+
+RUN echo ". /opt/ros/lunar/setup.bash" >> ~jenkins/.bashrc
 
 RUN apt-get update && apt-get install -y git apt-utils
 
@@ -55,13 +55,8 @@ RUN apt-get update && apt-get install -y unzip wget sudo && wget https://sonarso
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Get some ROS and development programs
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends python-rosinstall python-rosinstall-generator python-wstool -y
-
-RUN apt-get -y install g++-7 cppcheck doxygen
-
-RUN apt update
-
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew" --no-install-recommends clang-5.0 clang-tidy-5.0 plantuml valgrind rsync 
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
+python-rosinstall python-rosinstall-generator python-wstool g++-7 cppcheck doxygen clang-5.0 clang-tidy-5.0 plantuml valgrind rsync 
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
