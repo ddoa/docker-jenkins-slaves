@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM osrf/ros:lunar-desktop-full
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
@@ -33,31 +33,37 @@ RUN \
 # Define working directory.
 WORKDIR /data
 
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
+RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" >> /etc/apt/sources.list
+
+RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list 
+
+RUN apt-key adv --keyserver pgp.mit.edu --recv-key BA9EF27F
+
+RUN echo "source /opt/ros/lunar/setup.bash" >> ~/.bashrc
+
 # Set user jenkins to the image
 RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
     echo "jenkins:jenkins" | chpasswd
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git apt-utils
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget sudo && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
-# C++ and ROS stuff
-RUN apt-get -q update
-COPY install_ros.sh .
-RUN bash install_ros.sh
-RUN apt-get -q update && \
-  apt-get -y install g++ gtk+-3.0
-RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0.tar.bz2 && \
-  tar xvjf wxWidgets-3.1.0.tar.bz2 -C /opt && \
-  cd /opt/wxWidgets-3.1.0 && ./configure && make && make install
+# Get some ROS and development programs
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends python-rosinstall python-rosinstall-generator python-wstool -y
 
-RUN apt-get -q update && \
-  apt-get -y install cppcheck
+RUN apt-get -y install g++-7 cppcheck doxygen
 
-RUN apt-get -y install doxygen
+RUN apt update
+
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew" --no-install-recommends clang-5.0 clang-tidy-5.0 plantuml valgrind rsync 
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
 # Standard SSH port
 EXPOSE 22
