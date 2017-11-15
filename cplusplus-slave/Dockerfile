@@ -35,7 +35,7 @@ WORKDIR /data
 
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" >> /etc/apt/sources.list
+RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" >> /etc/apt/sources.list
 
 RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list 
 
@@ -56,7 +56,7 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Get some ROS and development programs
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
-python-rosinstall python-rosinstall-generator python-wstool g++-7 cppcheck doxygen clang-5.0 clang-tidy-5.0 plantuml valgrind rsync 
+python-rosinstall python-rosinstall-generator python-wstool g++-7 cppcheck doxygen clang-6.0 clang-tidy-6.0 plantuml valgrind rsync lftp
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
