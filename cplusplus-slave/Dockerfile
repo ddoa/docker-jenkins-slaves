@@ -69,6 +69,13 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_
   && ./b2 install \
   && rm -rf boost_1_65_1
 
+# Install WxWidget libraries for OSM
+RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0.tar.bz2 && \
+  tar xvjf wxWidgets-3.1.0.tar.bz2 -C /opt && \
+  cd /opt/wxWidgets-3.1.0 && ./configure && make && make install
+
+
+
 # Standard SSH port
 EXPOSE 22
 
