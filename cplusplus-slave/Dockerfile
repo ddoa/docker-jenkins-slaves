@@ -36,7 +36,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
 RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" >> /etc/apt/sources.list
 
-RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list 
+RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
 
 RUN apt-key adv --keyserver pgp.mit.edu --recv-key BA9EF27F
 
@@ -59,6 +59,16 @@ python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 RUN /bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}'
+
+# Install Boost libraries for OSM
+RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_1.tar.gz \
+  && tar xfz boost_1_65_1.tar.gz \
+  && rm boost_1_65_1.tar.gz \
+  && cd boost_1_65_1 \
+  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options \
+  && ./b2 install \
+  && rm -rf boost_1_65_1
+
 # Standard SSH port
 EXPOSE 22
 
