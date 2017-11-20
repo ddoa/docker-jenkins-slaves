@@ -74,7 +74,7 @@ RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidge
   tar xvjf wxWidgets-3.1.0.tar.bz2 -C /opt && \
   cd /opt/wxWidgets-3.1.0 && ./configure && make && make install
 
-RUN apt-get update && apt-get install -y automake autoconf libtool m4
+RUN apt-get update && apt-get install -y automake autoconf libtool m4 libboost-all-dev
 
 # Standard SSH port
 EXPOSE 22
