@@ -66,7 +66,7 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_
   && rm boost_1_65_1.tar.gz \
   && cd boost_1_65_1 \
   && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options \
-  && ./b2 install \
+  && ./b2 --with-test install \
   && rm -rf boost_1_65_1
 
 # Install WxWidget libraries for OSM
