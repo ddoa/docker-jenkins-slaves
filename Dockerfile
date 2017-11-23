@@ -46,17 +46,16 @@ RUN apt-get -q update && apt-get install -y unzip && wget https://sonarsource.bi
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E5267A6C
 RUN echo 'deb http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
 RUN echo 'deb-src http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
-RUN apt-get -q update && \
-  apt-get -y install libapache2-mod-php7.0 \
-  php-pear php7.0 php7.0-cgi php7.0-cli php7.0-common \
-  php7.0-fpm php7.0-gd php7.0-json php7.0-mbstring php7.0-mysql php7.0-readline \
-  php7.0-xml mysql-client-5.5
+RUN echo 'deb http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >>  /etc/apt/sources.list
+RUN echo 'deb-src http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >> /etc/apt/sources.list
+RUN apt-get -q update && apt-get -y install php7.2 mysql-client
 
 RUN apt-get -q update && \
-  apt-get -y install php7.0-curl bzip2
+  apt-get -y install php7.2-curl bzip2
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
 
