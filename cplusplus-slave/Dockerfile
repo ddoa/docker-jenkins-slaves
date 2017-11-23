@@ -38,7 +38,17 @@ RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" >> /etc/ap
 
 RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
 
-RUN apt-key adv --keyserver pgp.mit.edu --recv-key BA9EF27F
+RUN /bin/echo -e -----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\n\
+mI0ESuBvRwEEAMi4cDba7xlKaaoXjO1n1HX8RKrkW+HEIl79nSOSJyvzysajs7zU\\n\
+ow/OzCQp9NswqrDmNuH1+lPTTRNAGtK8r2ouq2rnXT1mTl23dpgHZ9spseR73s4Z\\n\
+BGw/ag4bpU5dNUStvfmHhIjVCuiSpNn7cyy1JSSvSs3N2mxteKjXLBf7ABEBAAG0\\n\
+GkxhdW5jaHBhZCBUb29sY2hhaW4gYnVpbGRziLYEEwECACAFAkrgb0cCGwMGCwkI\\n\
+BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRAek3eiup7yfzGKA/4xzUqNACSlB+k+DxFF\\n\
+HqkwKa/ziFiAlkLQyyhm+iqz80htRZr7Ls/ZRYZl0aSU56/hLe0V+TviJ1s8qdN2\\n\
+lamkKdXIAFfavA04nOnTzyIBJ82EAUT3Nh45skMxo4z4iZMNmsyaQpNl/m/lNtOL\\n\
+hR64v5ZybofB2EWkMxUzX8D/FQ==\\n\
+=LcUQ\\n\
+-----END PGP PUBLIC KEY BLOCK-----\\n | apt-key add -
 
 # Set user jenkins to the image
 RUN useradd -m -d /home/jenkins -s /bin/bash jenkins &&\
@@ -49,13 +59,13 @@ RUN echo ". /opt/ros/lunar/setup.bash" >> ~jenkins/.bashrc
 RUN apt-get update && apt-get install -y git apt-utils
 
 # Sonar Scanner
-RUN apt-get update && apt-get install -y unzip wget sudo && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget sudo && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt && rm sonar-scanner-2.8.zip
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Get some ROS and development programs
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
-python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-6.0 clang-tidy-6.0 plantuml valgrind rsync lftp
+python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-6.0 clang-tidy-6.0 clang-format-6.0 plantuml valgrind rsync lftp lcov
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 RUN /bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}'
@@ -68,6 +78,12 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_
   && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options \
   && ./b2 --with-test install \
   && rm -rf boost_1_65_1
+
+# Install newest CMake for ROS Boost support
+RUN cd /usr/local/; curl https://cmake.org/files/v3.10/cmake-3.10.0-Linux-x86_64.tar.gz | tar xz && \
+cd cmake-3.10.0-Linux-x86_64/ && mv bin/* ../bin/ && mkdir -p /usr/local/share/doc/cmake && \
+mv doc/cmake/* ../share/doc/cmake && mv man/* ../share/man/ && mv share/cmake-3.10/ ../share/ && \
+rm -dr /usr/local/cmake-3.10.0-Linux-x86_64/
 
 # Install WxWidget libraries for OSM
 RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0.tar.bz2 && \
