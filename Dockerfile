@@ -56,7 +56,7 @@ RUN apt-get -q update && \
   php7.0-xml mysql-client-5.5
 
 RUN apt-get -q update && \
-  apt-get -y install php7.0-curl
+  apt-get -y install php7.0-curl bzip2
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
 
