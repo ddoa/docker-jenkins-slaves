@@ -55,7 +55,7 @@ RUN echo 'deb-src http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >> /et
 RUN apt-get -q update && apt-get -y install php7.2 mysql-client
 
 RUN apt-get -q update && \
-  apt-get -y install php7.2-curl bzip2
+  apt-get -y install php7.2-curl php7.2-mbstring bzip2
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
 
