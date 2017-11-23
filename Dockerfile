@@ -52,7 +52,11 @@ RUN echo 'deb-src http://packages.dotdeb.org jessie all' >> /etc/apt/sources.lis
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
 RUN echo 'deb http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >>  /etc/apt/sources.list
 RUN echo 'deb-src http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >> /etc/apt/sources.list
-RUN apt-get -q update && apt-get -y install php7.2 mysql-client
+RUN apt-get -y install libgd3
+RUN apt-get -q update && apt-get -y install php7.2 \
+  php-pear php7.2-cgi php7.2-cli php7.2-common php7.2-fpm \
+  php7.2-gd php7.2-json php7.2-mysql php7.2-readline php7.2-xml \
+  mysql-client
 
 RUN apt-get -q update && \
   apt-get -y install php7.2-curl php7.2-mbstring bzip2
