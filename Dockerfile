@@ -92,6 +92,20 @@ RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidge
 
 RUN apt-get update && apt-get install -y automake autoconf libtool m4 vim libboost-all-dev
 
+# Install libfreenect2 (Kinect library) for WoR
+COPY "libfreenect2-0.2.0-std_bind.patch" /data
+RUN wget https://github.com/OpenKinect/libfreenect2/archive/v0.2.0.zip && \
+unzip v0.2.0.zip -d . && \
+apt-get install libturbojpeg libglfw3-dev beignet-dev libopenni2-dev -y && \
+cd libfreenect2-0.2.0 && \
+patch -Np1 < ../libfreenect2-0.2.0-std_bind.patch && \
+mkdir build && \
+cd build && \
+cmake .. -DENABLE_CXX11=ON && \
+make && \
+make install && \
+rm -dfr /data/v0.2.0.zip /data/libfreenect2-0.2.0
+
 # Standard SSH port
 EXPOSE 22
 
