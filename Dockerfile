@@ -108,7 +108,10 @@ rm -dfr /data/v0.2.0.zip /data/libfreenect2-0.2.0
 
 # Install nodeJS for WoR
 RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && \
-sudo apt-get install -y nodejs
+apt-get install -y nodejs
+
+# Install CGAL for WoR
+RUN apt-get install -y libcgal-dev
 
 # Standard SSH port
 EXPOSE 22
