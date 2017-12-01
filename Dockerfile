@@ -106,6 +106,10 @@ make && \
 make install && \
 rm -dfr /data/v0.2.0.zip /data/libfreenect2-0.2.0
 
+# Install nodeJS for WoR
+RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && \
+sudo apt-get install -y nodejs
+
 # Standard SSH port
 EXPOSE 22
 
