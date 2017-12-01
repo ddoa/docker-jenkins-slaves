@@ -94,8 +94,8 @@ RUN apt-get update && apt-get install -y automake autoconf libtool m4 vim libboo
 
 # Install libfreenect2 (Kinect library) for WoR
 COPY "libfreenect2-0.2.0-std_bind.patch" /data
-RUN wget https://github.com/OpenKinect/libfreenect2/archive/v0.2.0.zip && \
-unzip v0.2.0.zip -d . && \
+RUN curl -L https://github.com/OpenKinect/libfreenect2/archive/v0.2.0.tar.gz | \
+tar xz && \
 apt-get install libturbojpeg libglfw3-dev beignet-dev libopenni2-dev -y && \
 cd libfreenect2-0.2.0 && \
 patch -Np1 < ../libfreenect2-0.2.0-std_bind.patch && \
