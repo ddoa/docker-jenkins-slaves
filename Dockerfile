@@ -34,7 +34,7 @@ WORKDIR /data
 
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" >> /etc/apt/sources.list
+RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" >> /etc/apt/sources.list
 
 RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
 
@@ -65,7 +65,7 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Get some ROS and development programs
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
-python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-6.0 clang-tidy-6.0 clang-format-6.0 plantuml valgrind rsync lftp lcov
+python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-5.0 clang-tidy-5.0 clang-format-5.0 plantuml valgrind rsync lftp lcov
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 RUN /bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}'
