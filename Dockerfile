@@ -61,8 +61,6 @@ RUN apt-get update && apt-get install -y git apt-utils
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget sudo && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt && rm sonar-scanner-2.8.zip
 
-COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
-
 # Get some ROS and development programs
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
 python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-5.0 clang-tidy-5.0 clang-format-5.0 plantuml valgrind rsync lftp lcov
@@ -112,6 +110,9 @@ apt-get install -y nodejs
 
 # Install CGAL for WoR
 RUN apt-get install -y libcgal-dev
+
+# SonarQube configuration file
+COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Standard SSH port
 EXPOSE 22
