@@ -32,23 +32,23 @@ RUN \
 # Define working directory.
 WORKDIR /data
 
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+# Getting repository URL's
+RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" >> /etc/apt/sources.list && \
+    echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
 
-RUN echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" >> /etc/apt/sources.list
-
-RUN echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
-
-RUN /bin/echo -e -----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\n\
-mI0ESuBvRwEEAMi4cDba7xlKaaoXjO1n1HX8RKrkW+HEIl79nSOSJyvzysajs7zU\\n\
-ow/OzCQp9NswqrDmNuH1+lPTTRNAGtK8r2ouq2rnXT1mTl23dpgHZ9spseR73s4Z\\n\
-BGw/ag4bpU5dNUStvfmHhIjVCuiSpNn7cyy1JSSvSs3N2mxteKjXLBf7ABEBAAG0\\n\
-GkxhdW5jaHBhZCBUb29sY2hhaW4gYnVpbGRziLYEEwECACAFAkrgb0cCGwMGCwkI\\n\
-BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRAek3eiup7yfzGKA/4xzUqNACSlB+k+DxFF\\n\
-HqkwKa/ziFiAlkLQyyhm+iqz80htRZr7Ls/ZRYZl0aSU56/hLe0V+TviJ1s8qdN2\\n\
-lamkKdXIAFfavA04nOnTzyIBJ82EAUT3Nh45skMxo4z4iZMNmsyaQpNl/m/lNtOL\\n\
-hR64v5ZybofB2EWkMxUzX8D/FQ==\\n\
-=LcUQ\\n\
------END PGP PUBLIC KEY BLOCK-----\\n | apt-key add -
+# Getting repository keys
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    /bin/echo -e -----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\n\
+    mI0ESuBvRwEEAMi4cDba7xlKaaoXjO1n1HX8RKrkW+HEIl79nSOSJyvzysajs7zU\\n\
+    ow/OzCQp9NswqrDmNuH1+lPTTRNAGtK8r2ouq2rnXT1mTl23dpgHZ9spseR73s4Z\\n\
+    BGw/ag4bpU5dNUStvfmHhIjVCuiSpNn7cyy1JSSvSs3N2mxteKjXLBf7ABEBAAG0\\n\
+    GkxhdW5jaHBhZCBUb29sY2hhaW4gYnVpbGRziLYEEwECACAFAkrgb0cCGwMGCwkI\\n\
+    BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRAek3eiup7yfzGKA/4xzUqNACSlB+k+DxFF\\n\
+    HqkwKa/ziFiAlkLQyyhm+iqz80htRZr7Ls/ZRYZl0aSU56/hLe0V+TviJ1s8qdN2\\n\
+    lamkKdXIAFfavA04nOnTzyIBJ82EAUT3Nh45skMxo4z4iZMNmsyaQpNl/m/lNtOL\\n\
+    hR64v5ZybofB2EWkMxUzX8D/FQ==\\n\
+    =LcUQ\\n\
+    -----END PGP PUBLIC KEY BLOCK-----\\n | apt-key add -
 
 # Set user jenkins to the image
 RUN useradd -m -d /home/jenkins -s /bin/bash jenkins &&\
@@ -60,8 +60,6 @@ RUN apt-get update && apt-get install -y git apt-utils
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget sudo && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt && rm sonar-scanner-2.8.zip
-
-COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Get some ROS and development programs
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
@@ -112,6 +110,9 @@ apt-get install -y nodejs
 
 # Install CGAL for WoR
 RUN apt-get install -y libcgal-dev
+
+# SonarQube configuration file
+COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Standard SSH port
 EXPOSE 22
