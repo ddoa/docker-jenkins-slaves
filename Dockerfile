@@ -111,7 +111,7 @@ RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && \
 apt-get install -y nodejs
 
 # Install CGAL for WoR
-RUN apt-get install -y libcgal-dev
+RUN apt-get install -y libcgal-dev libcgal-qt5-dev
 
 # Standard SSH port
 EXPOSE 22
