@@ -114,12 +114,12 @@ apt-get install -y nodejs
 RUN apt-get install -y libcgal-dev libcgal-qt5-dev
 
 # Added newest cmake
-wget https://cmake.org/files/v3.10/cmake-3.10.1.tar.gz
-tar -zxvf cmake-3.10.1.tar.gz
-cd cmake-3.10.1/
-./configure
-make -j2
-sudo make install
+RUN wget https://cmake.org/files/v3.10/cmake-3.10.1.tar.gz && \
+tar -zxvf cmake-3.10.1.tar.gz && \
+cd cmake-3.10.1/ && \
+./configure && \
+make -j2 && \
+sudo make install && \
 cd ../
 
 # Standard SSH port
