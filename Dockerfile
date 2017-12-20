@@ -56,7 +56,7 @@ RUN apt-get -y install libgd3
 RUN apt-get -q update && apt-get -y install php7.2 \
   php-pear php7.2-cgi php7.2-cli php7.2-common php7.2-fpm \
   php7.2-gd php7.2-json php7.2-mysql php7.2-readline php7.2-xml \
-  mysql-client
+  mysql-client php7.2-sqlite3
 
 RUN apt-get -q update && \
   apt-get -y install php7.2-curl php7.2-mbstring bzip2
