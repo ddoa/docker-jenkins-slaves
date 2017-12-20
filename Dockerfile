@@ -75,7 +75,7 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_
   && tar xfz boost_1_65_1.tar.gz \
   && rm boost_1_65_1.tar.gz \
   && cd boost_1_65_1 \
-  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options \
+  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options,filesystem,system,thread,date_time,iostreams,serialization \
   && ./b2 --with-test install \
   && rm -rf boost_1_65_1
 
@@ -112,15 +112,6 @@ apt-get install -y nodejs
 
 # Install CGAL for WoR
 RUN apt-get install -y libcgal-dev libcgal-qt5-dev
-
-# Added newest cmake
-RUN wget https://cmake.org/files/v3.10/cmake-3.10.1.tar.gz && \
-tar -zxvf cmake-3.10.1.tar.gz && \
-cd cmake-3.10.1/ && \
-./configure && \
-make -j2 && \
-sudo make install && \
-cd ../
 
 # Standard SSH port
 EXPOSE 22
