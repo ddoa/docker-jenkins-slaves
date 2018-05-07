@@ -1,4 +1,4 @@
-FROM osrf/ros:lunar-desktop-full
+FROM osrf/ros:lunar-desktop-full-stretch
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
@@ -96,7 +96,7 @@ RUN apt-get update && apt-get install -y automake autoconf libtool m4 vim libboo
 COPY "libfreenect2-0.2.0-std_bind.patch" /data
 RUN curl -L https://github.com/OpenKinect/libfreenect2/archive/v0.2.0.tar.gz | \
 tar xz && \
-apt-get install libturbojpeg libglfw3-dev beignet-dev libopenni2-dev -y && \
+apt-get install libturbojpeg0-dev libglfw3-dev beignet-dev libopenni2-dev -y && \
 cd libfreenect2-0.2.0 && \
 patch -Np1 < ../libfreenect2-0.2.0-std_bind.patch && \
 mkdir build && \
@@ -111,7 +111,7 @@ RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && \
 apt-get install -y nodejs
 
 # Install CGAL for WoR
-RUN apt-get install -y libcgal-dev libcgal-qt5-dev
+RUN apt-get update && apt-get install -y libcgal-dev libcgal-qt5-dev
 
 # Standard SSH port
 EXPOSE 22
