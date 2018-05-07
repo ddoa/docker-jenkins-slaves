@@ -44,8 +44,9 @@ RUN apt-get update && apt-get install -y git
 #Atlassian Specific
 RUN apt-get -q update && \
   apt-get install -y apt-transport-https && \
-  sh -c 'echo "deb https://sdkrepo.atlassian.com/debian/ stable contrib" >>/etc/apt/sources.list' && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B07804338C015B73 && \
+  sh -c 'echo "deb https://packages.atlassian.com/atlassian-sdk-deb stable contrib" >>/etc/apt/sources.list' && \
+  wget https://packages.atlassian.com/api/gpg/key/public && \
+  apt-key add public && \
   apt-get -q update && \
   apt-get install -y atlassian-plugin-sdk
 
