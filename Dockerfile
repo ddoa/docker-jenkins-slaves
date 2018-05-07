@@ -42,8 +42,8 @@ RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
 # Install Deps
 RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y --force-yes expect git wget libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 lib32z1 python curl libqt5widgets5 && apt-get clean && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN apt-get update && apt-get install -y unzip && wget https://services.gradle.org/distributions/gradle-3.2.1-bin.zip --quiet && unzip gradle-3.2.1-bin.zip -d /opt
-ENV GRADLE_HOME /opt/gradle-3.2.1
+RUN apt-get update && apt-get install -y unzip && wget https://services.gradle.org/distributions/gradle-4.4-bin.zip --quiet && unzip gradle-4.4-bin.zip -d /opt
+ENV GRADLE_HOME /opt/gradle-4.4
 ENV PATH $PATH:$GRADLE_HOME/bin
 
 # Copy install tools
