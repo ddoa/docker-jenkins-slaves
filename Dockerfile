@@ -82,6 +82,9 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
+#Python
+RUN apt-get -q update && apt-get -y install python
+
 # Standard SSH port
 EXPOSE 22
 
