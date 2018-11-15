@@ -42,7 +42,7 @@ RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
 RUN apt-get update && apt-get install -y git gcc make
 
 # Sonar Scanner
-RUN apt-get -q update && apt-get install -y unzip && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
