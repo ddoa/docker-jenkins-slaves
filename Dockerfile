@@ -1,5 +1,5 @@
 # This Dockerfile is used to build an image containing basic stuff to be used as a Jenkins slave build node.
-FROM debian:latest
+FROM debian:testing-20181011
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
@@ -43,11 +43,11 @@ RUN set -ex \
     B9AE9905FFD7803F25714661B63B535A4C206CA9 \
     C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
   ; do \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+    gpg --no-tty --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 9.2.0
+ENV NODE_VERSION 9.11.2
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -65,15 +65,20 @@ RUN \
   apt-get -q update && \
   echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
   echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
+  apt-key adv --no-tty --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
   apt-get -q update && \
   echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
   apt-get -q update && \
   apt-get install -y oracle-java8-installer oracle-java8-set-default && \
   rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}'; rm -rf /var/cache/oracle-jdk8-installer
 
+# GCC/G++
+# Get some ROS and development programs
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -q update && apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends gcc-7 g++-7
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+
 # Sonar Scanner
-RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
