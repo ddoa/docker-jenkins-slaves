@@ -47,6 +47,14 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
+RUN cd /usr/lib && \
+    wget https://github.com/JetBrains/kotlin/releases/download/v1.3.10/kotlin-compiler-1.3.10.zip && \
+    unzip kotlin-compiler-*.zip && \
+    rm kotlin-compiler-*.zip && \
+    rm -f kotlinc/bin/*.bat
+
+ENV PATH $PATH:/usr/lib/kotlinc/bin
+
 # Standard SSH port
 EXPOSE 22
 
