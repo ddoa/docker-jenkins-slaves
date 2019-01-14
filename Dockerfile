@@ -1,4 +1,4 @@
-FROM osrf/ros:lunar-desktop-full-stretch
+FROM osrf/ros:melodic-desktop-full-stretch
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
@@ -19,9 +19,10 @@ ENV LC_ALL en_US.UTF-8
 
 RUN \
   apt-get -q update && \
+  apt-get install -y wget && \
   echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
   echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
+  apt-key adv --no-tty  --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
   apt-get -q update && \
   echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
   apt-get update && \
@@ -56,7 +57,7 @@ RUN useradd -m -d /home/jenkins -s /bin/bash jenkins &&\
 
 RUN echo ". /opt/ros/lunar/setup.bash" >> ~jenkins/.bashrc
 
-RUN apt-get update && apt-get install -y git apt-utils
+RUN apt-get update && apt-get install -y git apt-utils libsdl2-dev qtbase5-dev
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt && rm sonar-scanner-2.8.zip
@@ -76,14 +77,12 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_
   && rm boost_1_65_1.tar.gz \
   && cd boost_1_65_1 \
   && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options,filesystem,system,thread,date_time,iostreams,serialization \
-  && ./b2 --with-test install \
+  && ./b2 --with-test --with-date_time --with-program_options install \
   && rm -rf boost_1_65_1
 
 # Install newest CMake for ROS Boost support
-RUN cd /usr/local/; curl https://cmake.org/files/v3.10/cmake-3.10.0-Linux-x86_64.tar.gz | tar xz && \
-cd cmake-3.10.0-Linux-x86_64/ && mv bin/* ../bin/ && mkdir -p /usr/local/share/doc/cmake && \
-mv doc/cmake/* ../share/doc/cmake && mv man/* ../share/man/ && mv share/cmake-3.10/ ../share/ && \
-rm -dr /usr/local/cmake-3.10.0-Linux-x86_64/
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3-Linux-x86_64.sh && \
+ sh cmake-3.13.3-Linux-x86_64.sh --skip-license --prefix=/usr/local
 
 # Install WxWidget libraries for OSM
 RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0.tar.bz2 && \
@@ -93,25 +92,40 @@ RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidge
 RUN apt-get update && apt-get install -y automake autoconf libtool m4 vim libboost-all-dev
 
 # Install libfreenect2 (Kinect library) for WoR
-COPY "libfreenect2-0.2.0-std_bind.patch" /data
-RUN curl -L https://github.com/OpenKinect/libfreenect2/archive/v0.2.0.tar.gz | \
-tar xz && \
-apt-get install libturbojpeg0-dev libglfw3-dev beignet-dev libopenni2-dev -y && \
-cd libfreenect2-0.2.0 && \
-patch -Np1 < ../libfreenect2-0.2.0-std_bind.patch && \
+RUN apt-get install -y  build-essential cmake pkg-config libusb-1.0-0-dev libturbojpeg0-dev libglfw3-dev beignet-dev libva-dev libjpeg-dev libopenni2-dev opencl-headers && \
+git clone https://github.com/OpenKinect/libfreenect2.git && \
+cd libfreenect2 && \
 mkdir build && \
 cd build && \
-cmake .. -DENABLE_CXX11=ON && \
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/freenect2 && \
 make && \
-make install && \
-rm -dfr /data/v0.2.0.zip /data/libfreenect2-0.2.0
+make install
+
+# Install libFranka
+RUN git clone https://github.com/frankaemika/libfranka.git /opt/libfranka && \
+cd /opt/libfranka && \
+rm -rf common && \
+git clone https://github.com/frankaemika/libfranka-common.git common && \
+.ci/libonly.sh
 
 # Install nodeJS for WoR
-RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && \
+RUN apt-get install -y sudo && \
+curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - && \
 apt-get install -y nodejs
 
 # Install CGAL for WoR
 RUN apt-get update && apt-get install -y libcgal-dev libcgal-qt5-dev
+
+RUN \
+  apt-get -q update && \
+  apt-get install -y wget && \
+  echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
+  echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list && \
+  apt-key adv --no-tty --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
+  apt-get -q update && \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer oracle-java8-set-default
 
 # Standard SSH port
 EXPOSE 22
