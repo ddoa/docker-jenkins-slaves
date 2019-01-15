@@ -77,7 +77,7 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_
   && rm boost_1_65_1.tar.gz \
   && cd boost_1_65_1 \
   && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options,filesystem,system,thread,date_time,iostreams,serialization \
-  && ./b2 --with-test --with-date_time --with-program_options install \
+  && ./b2 --with-test --with-date_time --with-program_options --with-filesystem --with-system --with-thread --with-iostreams  install \
   && rm -rf boost_1_65_1
 
 # Install newest CMake for ROS Boost support
