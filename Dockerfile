@@ -47,10 +47,11 @@ RUN set -ex \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 9.2.0
+ENV NODE_VERSION 12.2.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+  && gpg --receive-keys 8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
   && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
   && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
@@ -60,24 +61,23 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 RUN mkdir "/home/jenkins/.npm-packages"
 RUN chown jenkins /home/jenkins/.npm-packages
 
-#  Create a new image from the base nodejs 7 image.
-FROM node:9.2.0
+FROM node:12.2.0
 # Create the target directory in the image
 RUN mkdir -p /usr/src/app
 # Set the created directory as the working directory
 WORKDIR /usr/src/app
 
-# JDK8
+# JDK11
 RUN \
   apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
-  echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
+  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java8-installer oracle-java8-set-default && \
-  rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}'; rm -rf /var/cache/oracle-jdk8-installer
+  apt-get install -y oracle-java11-installer oracle-java11-set-default && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk11-installer
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
