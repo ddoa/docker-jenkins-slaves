@@ -26,7 +26,7 @@ RUN \
   echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
   apt-get install -y oracle-java11-installer oracle-java11-set-default && \
-  rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}' && \
+  rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.87; curl -L https://github.com/danmar/cppcheck/archive/1.87.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.87/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.87;}' && \
   rm -rf /var/cache/oracle-jdk11-installer
 
 
@@ -69,15 +69,15 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="-
 python-rosinstall python-rosinstall-generator python-wstool g++-7 doxygen clang-5.0 clang-tidy-5.0 clang-format-5.0 plantuml valgrind rsync lftp lcov
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
-RUN /bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.81; curl -L http://github.com/danmar/cppcheck/releases/download/1.81/cppcheck-1.81.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.81/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.81;}'
+RUN /bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.87; curl -L https://github.com/danmar/cppcheck/archive/1.87.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.87/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.87;}'
 
 # Install Boost libraries for OSM
 RUN wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_1.tar.gz \
   && tar xfz boost_1_65_1.tar.gz \
   && rm boost_1_65_1.tar.gz \
   && cd boost_1_65_1 \
-  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options,filesystem,system,thread,date_time,iostreams,serialization,regex \
-  && ./b2 --with-test --with-date_time --with-program_options --with-filesystem --with-system --with-thread --with-iostreams --with-regex  install \
+  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options,filesystem,system,thread,date_time,iostreams,serialization,regex,signals \
+  && ./b2 --with-test --with-date_time --with-program_options --with-filesystem --with-system --with-thread --with-iostreams --with-regex --with-signals install \
   && rm -rf boost_1_65_1
 
 # Install newest CMake for ROS Boost support
