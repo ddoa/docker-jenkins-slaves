@@ -24,11 +24,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java11-installer oracle-java11-set-default && \
+  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk11-installer
+  rm -rf /var/cache/oracle-jdk13-installer
 
 # Define working directory.
 WORKDIR /data
@@ -44,20 +44,16 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E5267A6C
-RUN echo 'deb http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
-RUN echo 'deb-src http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
-RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
-RUN echo 'deb http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >>  /etc/apt/sources.list
-RUN echo 'deb-src http://ppa.launchpad.net/ondrej/php/ubuntu xenial main' >> /etc/apt/sources.list
 RUN apt-get -y install libgd3
-RUN apt-get -q update && apt-get -y install php7.2 \
-  php-pear php7.2-cgi php7.2-cli php7.2-common php7.2-fpm \
-  php7.2-gd php7.2-json php7.2-mysql php7.2-readline php7.2-xml \
-  mysql-client php7.2-sqlite3
+RUN apt-get -q update && apt-get -y install php7.3 \
+  php-pear php7.3-cgi php7.3-cli php7.3-common php7.3-fpm \
+  php7.3-gd php7.3-json php7.3-mysql php7.3-readline php7.3-xml \
+  default-mysql-client php7.3-sqlite3
+
+RUN apt-get remove libcurl4 && apt-get -y install curl
 
 RUN apt-get -q update && \
-  apt-get -y install php7.2-curl php7.2-mbstring bzip2
+  apt-get -y install php7.3-curl php7.3-mbstring bzip2
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
 
