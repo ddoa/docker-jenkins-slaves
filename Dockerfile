@@ -42,6 +42,7 @@ RUN set -ex \
     DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
     B9AE9905FFD7803F25714661B63B535A4C206CA9 \
     C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+    8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
   ; do \
     gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
   done
@@ -67,17 +68,17 @@ RUN mkdir -p /usr/src/app
 # Set the created directory as the working directory
 WORKDIR /usr/src/app
 
-# JDK11
+# JDK13
 RUN \
   apt-get -q update && \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java11-installer oracle-java11-set-default && \
+  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk11-installer
+  rm -rf /var/cache/oracle-jdk13-installer
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
