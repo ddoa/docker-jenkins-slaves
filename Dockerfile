@@ -24,11 +24,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java11-installer oracle-java11-set-default && \
+  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk11-installer
+  rm -rf /var/cache/oracle-jdk13-installer
 
 
 # Define working directory.
@@ -45,7 +45,7 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
-RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python-pip python3-dev python3-pip python-virtualenv python3-virtualenv
+RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python-pip python3-dev python3-pip python-virtualenv python3-virtualenv && pip install pytest-cov
 
 # Standard SSH port
 EXPOSE 22
