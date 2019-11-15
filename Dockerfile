@@ -23,11 +23,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java11-installer oracle-java11-set-default && \
+  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
   rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.87; curl -L https://github.com/danmar/cppcheck/archive/1.87.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.87/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.87;}' && \
-  rm -rf /var/cache/oracle-jdk11-installer
+  rm -rf /var/cache/oracle-jdk13-installer
 
 
 # Define working directory.
@@ -102,11 +102,11 @@ make && \
 make install
 
 # Install libFranka
-RUN git clone https://github.com/frankaemika/libfranka.git /opt/libfranka && \
-cd /opt/libfranka && \
-rm -rf common && \
-git clone https://github.com/frankaemika/libfranka-common.git common && \
-.ci/libonly.sh
+# RUN git clone https://github.com/frankaemika/libfranka.git /opt/libfranka && \
+# osrf/ros:melodic-desktop-full-stretchcd /opt/libfranka && \
+# rm -rf common && \
+# git clone https://github.com/frankaemika/libfranka-common.git common && \
+# .ci/libonly.sh
 
 # Install nodeJS for WoR
 RUN apt-get install -y sudo && \
