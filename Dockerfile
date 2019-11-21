@@ -97,6 +97,9 @@ ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PAT
 # Correct permissions
 RUN chown -R jenkins /usr/local/flutter
 
+# Install lcov to convert lcovinfo to HTML
+RUN apt-get update -qq -y && apt-get install lcov -y
+
 # Standard SSH port
 EXPOSE 22
 
