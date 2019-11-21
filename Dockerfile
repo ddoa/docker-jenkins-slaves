@@ -94,6 +94,9 @@ RUN  /usr/local/flutter/bin/flutter doctor -v \
 # Setting flutter and dart-sdk to PATH so they are accessible from terminal
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
+# Correct permissions
+RUN chown -R jenkins /usr/local/flutter
+
 # Standard SSH port
 EXPOSE 22
 
