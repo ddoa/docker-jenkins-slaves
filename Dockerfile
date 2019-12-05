@@ -116,6 +116,9 @@ apt-get install -y nodejs
 # Install CGAL for WoR
 RUN apt-get update && apt-get install -y libcgal-dev libcgal-qt5-dev
 
+# Install SDL & SDL_image for WoR 
+RUN apt-get update && apt-get install -y libsdl1.2-dev libsdl-image1.2-dev
+
 # Standard SSH port
 EXPOSE 22
 
