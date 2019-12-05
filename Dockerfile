@@ -85,6 +85,9 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
+# Install Angular CLI
+
+RUN npm install -g @angular/cli
 # Standard SSH port
 EXPOSE 22
 
