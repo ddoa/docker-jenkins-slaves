@@ -62,7 +62,6 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 RUN mkdir "/home/jenkins/.npm-packages"
 RUN chown jenkins /home/jenkins/.npm-packages
 
-FROM node:12.2.0
 # Create the target directory in the image
 RUN mkdir -p /usr/src/app
 # Set the created directory as the working directory
@@ -87,7 +86,8 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Install Angular CLI
 
-RUN npm install -g @angular/cli
+RUN npm install -g @angular/cli && chown -R jenkins /usr/local/lib/node_modules
+
 # Standard SSH port
 EXPOSE 22
 
