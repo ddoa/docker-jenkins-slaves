@@ -119,6 +119,12 @@ RUN apt-get update && apt-get install -y libcgal-dev libcgal-qt5-dev
 # Install SDL & SDL_image for WoR 
 RUN apt-get update && apt-get install -y libsdl1.2-dev libsdl-image1.2-dev
 
+# Install googletest framework
+RUN apt-get update && apt-get install -y libgtest-dev
+
+# Install ros build depends
+RUN apt-get update && apt-get install -y ros-melodic-tf2-sensor-msgs ros-melodic-cob* ros-melodic-pointcloud-to-laserscan
+
 # Standard SSH port
 EXPOSE 22
 
