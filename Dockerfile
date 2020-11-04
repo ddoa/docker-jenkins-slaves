@@ -24,11 +24,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
+  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk13-installer
+  rm -rf /var/cache/oracle-jdk15-installer
 
 # Define working directory.
 WORKDIR /data
@@ -39,7 +39,7 @@ RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
 
 RUN apt-get update && apt-get install -y git
 RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip && cd /opt ; unzip /data/apache-maven-3.5.4-bin.zip
-RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.1-bin.zip
+RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.3-bin.zip
 
 
 # Sonar Scanner
