@@ -24,11 +24,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
+  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk13-installer
+  rm -rf /var/cache/oracle-jdk15-installer
 
 
 # Define working directory.
@@ -40,7 +40,7 @@ RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
 
 RUN apt-get update && apt-get install -y git
 RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip && cd /opt ; unzip /data/apache-maven-3.5.4-bin.zip
-RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.1-bin.zip
+RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.3-bin.zip
 
 
 # Sonar Scanner
@@ -68,7 +68,7 @@ RUN cd /opt && wget --output-document=android-sdk.tgz --quiet https://dl.google.
   rm -f android-sdk.tgz && \
   chown -R root.root android-sdk-linux && \
   /opt/tools/android-accept-licenses.sh "android-sdk-linux/tools/android update sdk --all --no-ui --filter platform-tools,tools" && \
-  /opt/tools/android-accept-licenses.sh "android-sdk-linux/tools/android update sdk --all --no-ui --filter platform-tools,tools,build-tools-25.0.0,build-tools-25.0.3,build-tools-26.0.2,build-tools-27.0.3,build-tools-28.0.3,android-25,android-26,android-27,android-28,addon-google_apis_x86-google-21,extra-android-support,extra-android-m2repository,extra-google-m2repository,extra-google-google_play_services,sys-img-armeabi-v7a-android-24"
+  /opt/tools/android-accept-licenses.sh "android-sdk-linux/tools/android update sdk --all --no-ui --filter platform-tools,tools,build-tools-25.0.0,build-tools-25.0.3,build-tools-26.0.2,build-tools-27.0.3,build-tools-28.0.3,build-tools-29.0.3,android-25,android-26,android-27,android-28,android-29,android-30,addon-google_apis_x86-google-21,extra-android-support,extra-android-m2repository,extra-google-m2repository,extra-google-google_play_services,sys-img-armeabi-v7a-android-24"
 
 # Install OpenJDK8
 RUN \
@@ -79,9 +79,8 @@ RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && echo yes | /opt/android-sdk
 
 #Install npm
 RUN apt-get install -y curl \
-  && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-  && apt-get install -y nodejs \
-  && curl -L https://www.npmjs.com/install.sh | sh
+  && curl -sL https://deb.nodesource.com/setup_14.x | sudo bash - \
+  && apt-get install -y nodejs 
 
 # Setup environment
 ENV ANDROID_HOME /opt/android-sdk-linux
