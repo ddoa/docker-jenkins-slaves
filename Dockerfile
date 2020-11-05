@@ -24,11 +24,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
+  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk13-installer
+  rm -rf /var/cache/oracle-jdk15-installer
 
 
 # Define working directory.
@@ -39,7 +39,7 @@ RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
     echo "jenkins:jenkins" | chpasswd
 
 RUN apt-get update && apt-get install -y git
-RUN apt-get install -y unzip && wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip && cd /opt; mkdir /opt/apache-maven-3.5.0 ; cd /opt/apache-maven-3.5.0; unzip /data/apache-maven-3.5.4-bin.zip; mv /opt/apache-maven-3.5.0/apache-maven-3.5.4/* . && cd /data && wget http://apache.cs.uu.nl/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.1-bin.zip
+RUN apt-get install -y unzip && wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip && cd /opt; mkdir /opt/apache-maven-3.5.0 ; cd /opt/apache-maven-3.5.0; unzip /data/apache-maven-3.5.4-bin.zip; mv /opt/apache-maven-3.5.0/apache-maven-3.5.4/* . && cd /data && wget http://apache.cs.uu.nl/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.3-bin.zip
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 curl && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
@@ -47,8 +47,8 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 curl && wget https://b
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Install Scala
-ENV SCALA_VERSION 2.12.1
-ENV SBT_VERSION 0.13.15
+ENV SCALA_VERSION 2.13.3
+ENV SBT_VERSION 1.4.1
 ENV SBT_URL http://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb
 ENV SCALA_URL http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz
 
