@@ -26,7 +26,7 @@ RUN \
   apt-get -q update && \
   echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java13-set-default && \
+  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/oracle-jdk15-installer
 
