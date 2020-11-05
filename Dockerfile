@@ -53,9 +53,13 @@ RUN apt-get -q update && apt-get -y install php7.3 \
 RUN apt-get remove libcurl4 && apt-get -y install curl
 
 RUN apt-get -q update && \
-  apt-get -y install php7.3-curl php7.3-mbstring bzip2
+  apt-get -y install php7.3-curl php7.3-mbstring bzip2 libmcrypt-dev php7.3-dev
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
+
+RUN pecl channel-update pecl.php.net && pecl install mcrypt-1.0.2
+
+RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/cli/conf.d/mcrypt.ini"
 
 RUN ln -s /data/composer.phar /usr/local/bin/composer
 
