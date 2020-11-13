@@ -59,6 +59,9 @@ ENV PATH $PATH:/usr/lib/kotlinc/bin
 
 RUN wget https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz && tar xvzf openjdk-12.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 # Standard SSH port
 EXPOSE 22
 
