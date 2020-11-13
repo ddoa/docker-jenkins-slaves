@@ -43,9 +43,9 @@ RUN apt-get install -y unzip && wget http://apache.cs.uu.nl/maven/maven-3/3.6.3/
 
 
 # Sonar Scanner
-RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
 
-COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
+COPY "sonar-scanner.properties" /opt/sonar-scanner-4.5.0.2216/conf
 
 RUN cd /usr/lib && \
     wget https://github.com/JetBrains/kotlin/releases/download/v1.3.10/kotlin-compiler-1.3.10.zip && \
@@ -54,6 +54,10 @@ RUN cd /usr/lib && \
     rm -f kotlinc/bin/*.bat
 
 ENV PATH $PATH:/usr/lib/kotlinc/bin
+
+# Add Java12
+
+RUN wget https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz && tar xvzf openjdk-12.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm
 
 # Standard SSH port
 EXPOSE 22
