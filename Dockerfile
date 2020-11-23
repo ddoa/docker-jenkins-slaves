@@ -169,11 +169,13 @@ RUN cd /tmp; rm -rf cppcheck-build cppcheck-2.2; curl -L https://github.com/danm
 
 RUN apt install -y mc findutils locate
 
-
 ADD ros-gazebo-demo /data/ros-gazebo-demo
 
-
 RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+
+RUN echo "source /opt/ros/foxy/setup.bash" >> /home/jenkins/.bashrc
+
+RUN cat /opt/ros/foxy/lib/x86_64-linux-gnu/urdfdom/cmake/urdfdom-config.cmake | sed 's|set(urdfdom_INCLUDE_DIRS.*)|set(urdfdom_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../include" )|' | sudo tee  /opt/ros/foxy/lib/x86_64-linux-gnu/urdfdom/cmake/urdfdom-config.cmake
 
 RUN updatedb
 
