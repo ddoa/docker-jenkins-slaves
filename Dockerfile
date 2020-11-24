@@ -179,6 +179,8 @@ RUN cat /opt/ros/foxy/lib/x86_64-linux-gnu/urdfdom/cmake/urdfdom-config.cmake | 
 
 RUN updatedb
 
+RUN chown -R jenkins /data/ros-gazebo-demo
+
 # Standard SSH port
 EXPOSE 22
 
