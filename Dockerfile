@@ -42,7 +42,7 @@ RUN apt-get update && apt-get install -y git
 RUN apt-get install -y unzip && wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip && cd /opt; mkdir /opt/apache-maven-3.5.0 ; cd /opt/apache-maven-3.5.0; unzip /data/apache-maven-3.5.4-bin.zip; mv /opt/apache-maven-3.5.0/apache-maven-3.5.4/* . && cd /data && wget http://apache.cs.uu.nl/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip && cd /opt ; unzip /data/apache-maven-3.6.3-bin.zip
 
 # Sonar Scanner
-RUN apt-get update && apt-get install -y unzip wget bzip2 curl && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
