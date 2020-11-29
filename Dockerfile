@@ -64,6 +64,9 @@ RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/cli/c
 
 RUN ln -s /data/composer.phar /usr/local/bin/composer
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 # Standard SSH port
 EXPOSE 22
 
