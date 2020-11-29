@@ -181,6 +181,9 @@ RUN updatedb
 
 RUN chown -R jenkins /data/ros-gazebo-demo
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 # Standard SSH port
 EXPOSE 22
 
