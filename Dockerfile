@@ -99,6 +99,9 @@ RUN chown -R jenkins /usr/local/flutter
 # Install lcov to convert lcovinfo to HTML
 RUN apt-get update -qq -y && apt-get install lcov -y
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 # Standard SSH port
 EXPOSE 22
 
