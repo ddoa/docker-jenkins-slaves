@@ -107,6 +107,9 @@ RUN chown -R jenkins:jenkins /home/jenkins
 
 RUN apt-get update && apt-get install -y python make g++
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 EXPOSE 22
 
 # Default command
