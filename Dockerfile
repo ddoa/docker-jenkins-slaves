@@ -58,6 +58,9 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 # Standard SSH port
 EXPOSE 22
 
