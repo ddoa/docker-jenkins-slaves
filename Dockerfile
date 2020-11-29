@@ -47,6 +47,9 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python-pip python3-dev python3-pip python-virtualenv python3-virtualenv && pip install pytest-cov
 
+# Add docker-client to be able to build, run etc. docker containers
+RUN apt-get install -y docker
+
 # Standard SSH port
 EXPOSE 22
 
