@@ -112,8 +112,9 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 curl && wget https://b
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-4.5.0.2216-linux/conf
 
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
- g++-9 doxygen plantuml valgrind rsync lftp lcov
+RUN apt-get install -y aptitude
+
+RUN DEBIAN_FRONTEND="noninteractive" aptitude -q install -y g++-9 doxygen plantuml valgrind rsync lftp lcov
  
  # Install clang tools
 RUN curl -SL https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang%2bllvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz | tar -xJC . && \
@@ -158,7 +159,7 @@ RUN apt-get install -y ros-foxy-gazebo-ros-pkgs
 RUN apt install -y ros-foxy-lanelet2
 
 # Install pip2 (can't be installed from apt because it has been removed since 20.04)
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py &&\
+RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py &&\
  python get-pip.py
 
 # Install mapnik and other dependencies for the Gazebo OSM plugin
@@ -176,6 +177,12 @@ RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 RUN echo "source /opt/ros/foxy/setup.bash" >> /home/jenkins/.bashrc
 
 RUN cat /opt/ros/foxy/lib/x86_64-linux-gnu/urdfdom/cmake/urdfdom-config.cmake | sed 's|set(urdfdom_INCLUDE_DIRS.*)|set(urdfdom_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../include" )|' | sudo tee  /opt/ros/foxy/lib/x86_64-linux-gnu/urdfdom/cmake/urdfdom-config.cmake
+
+RUN apt-get install -y build-essential git cmake pkg-config libbz2-dev libxml2-dev libzip-dev libboost-all-dev lua5.2 liblua5.2-dev libtbb-dev
+
+RUN git clone https://github.com/Project-OSRM/osrm-backend.git && cd osrm-backend && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . &&  sudo cmake --build . --target install
+
+RUN apt-get install -y libsqlite3-dev sqlite3 && mkdir proj && cd proj && wget https://download.osgeo.org/proj/proj-7.2.0.tar.gz && tar xvzf proj-7.2.0.tar.gz && cd proj-7.2.0 && mkdir build && cd build && cmake .. && cmake --build . && cmake --build . --target install && projsync --all
 
 RUN updatedb
 
