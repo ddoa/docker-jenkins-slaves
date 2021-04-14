@@ -187,6 +187,30 @@ RUN chown -R jenkins /data/ros-gazebo-demo
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
 
+# Add OSRM (Open Source Routing Machine - C++) backend
+RUN git clone https://github.com/Project-OSRM/osrm-backend.git && \
+ cd osrm-backend && \
+ apt install -y build-essential git cmake pkg-config libbz2-dev libxml2-dev libzip-dev libboost-all-dev lua5.2 liblua5.2-dev libtbb-dev && \
+ mkdir -p build && \
+ cd build && \
+ cmake .. && \
+ cmake --build . && \
+ cmake --build . --target install
+
+# Add Projectie
+RUN apt install -y libsqlite3-dev sqlite3 && \
+ mkdir proj && \
+ cd proj && \
+ wget https://download.osgeo.org/proj/proj-7.2.0.tar.gz && \
+ tar xvzf proj-7.2.0.tar.gz && \
+ cd proj-7.2.0 && \
+ mkdir build && \
+ cd build && \
+ cmake .. && \
+ cmake --build . && \
+ cmake --build . --target install && \
+ projsync --all
+
 # Standard SSH port
 EXPOSE 22
 
