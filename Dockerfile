@@ -67,13 +67,16 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
+RUN apt-get -q update && \
+  apt-get install -y curl
+
 RUN \
   apt-get -q update && \
   apt-get install -y wget software-properties-common && \
   add-apt-repository ppa:linuxuprising/java && \
   apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
+  echo oracle-java16-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  apt-get install -y oracle-java16-installer oracle-java16-set-default && \
   rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-2.2; curl -L https://github.com/danmar/cppcheck/archive/2.2.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-2.2/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-2.2;}' && \
   rm -rf /var/cache/oracle-jdk13-installer
 
@@ -113,7 +116,7 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 curl && wget https://b
 COPY "sonar-scanner.properties" /opt/sonar-scanner-4.5.0.2216-linux/conf
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
- g++-9 doxygen plantuml valgrind rsync lftp lcov
+ doxygen plantuml valgrind rsync lftp lcov
  
  # Install clang tools
 RUN curl -SL https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang%2bllvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz | tar -xJC . && \
@@ -159,7 +162,7 @@ RUN apt install -y ros-foxy-lanelet2
 
 # Install pip2 (can't be installed from apt because it has been removed since 20.04)
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py &&\
- python get-pip.py
+ python3 get-pip.py
 
 # Install mapnik and other dependencies for the Gazebo OSM plugin
 RUN pip install numpy osmapi &&\
