@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 RUN useradd -m -d /home/jenkins -s /bin/bash jenkins && echo "jenkins:jenkins" | chpasswd
 
 RUN chown -R jenkins:jenkins /home/jenkins
+RUN chown -R jenkins:jenkins /opt/android
 
 # Standard SSH port
 
