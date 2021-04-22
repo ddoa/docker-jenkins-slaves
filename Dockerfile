@@ -12,7 +12,9 @@ RUN chown -R jenkins:jenkins /home/jenkins
 # Standard SSH port
 
 # Add docker-client to be able to build, run etc. docker containers
-RUN apt-get install -y docker openssh-server
+RUN apt-get install -y docker openssh-server 
+
+RUN service ssh start
 
 EXPOSE 22
 
