@@ -19,20 +19,11 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-RUN \
-  apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
-
-
 # Define working directory.
 WORKDIR /data
+
+RUN apt-get update && apt-get install -y wget
+RUN mkdir /usr/lib/jvm && wget https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz && tar xvzf openjdk-15.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm
 
 # Set user jenkins to the image
 RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
@@ -57,50 +48,55 @@ RUN apt-get update && apt-get install -y unzip expect sudo && wget https://servi
 ENV GRADLE_HOME /opt/gradle-4.4
 ENV PATH $PATH:$GRADLE_HOME/bin
 
-# Copy install tools
-RUN mkdir /opt/tools
-COPY tools/android-accept-licenses.sh /opt/tools/android-accept-licenses.sh
-ENV PATH ${PATH}:/opt/tools
-
-# Install Android SDK
-RUN cd /opt && wget --output-document=android-sdk.tgz --quiet https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz && \
-  tar xzf android-sdk.tgz && \
-  rm -f android-sdk.tgz && \
-  chown -R root.root android-sdk-linux && \
-  /opt/tools/android-accept-licenses.sh "android-sdk-linux/tools/android update sdk --all --no-ui --filter platform-tools,tools" && \
-  /opt/tools/android-accept-licenses.sh "android-sdk-linux/tools/android update sdk --all --no-ui --filter platform-tools,tools,build-tools-25.0.0,build-tools-25.0.3,build-tools-26.0.2,build-tools-27.0.3,build-tools-28.0.3,build-tools-29.0.3,android-25,android-26,android-27,android-28,android-29,android-30,addon-google_apis_x86-google-21,extra-android-support,extra-android-m2repository,extra-google-m2repository,extra-google-google_play_services,sys-img-armeabi-v7a-android-24"
-
 # Install OpenJDK8
 RUN \
     cd /opt && wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz && \
     cd /usr/lib/jvm && tar xvzf /opt/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz
 
-RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && echo yes | /opt/android-sdk-linux/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" && echo yes | /opt/android-sdk-linux/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+ENV JAVA_HOME /usr/lib/jvm/jdk8u232-b09/
+ENV PATH ${PATH}:{JAVA_HOME}/bin
+
+# Install Android SDK
+RUN mkdir -p .android && touch .android/repositories.cfg
+RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip 
+RUN mkdir /opt/android-sdk 
+RUN unzip sdk-tools.zip && mv tools /opt/android-sdk/tools && rm sdk-tools.zip
+RUN cd /opt/android-sdk/tools/bin && yes | ./sdkmanager --licenses
+
+RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && cd /opt/android-sdk/tools/bin && ./sdkmanager "build-tools;29.0.3" "patcher;v4" "platform-tools" "platforms;android-29" "platforms;android-30" "tools" 
+RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && echo yes | /opt/android-sdk/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" && echo yes | /opt/android-sdk/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
 
 #Install npm
 RUN apt-get install -y curl \
   && curl -sL https://deb.nodesource.com/setup_14.x | sudo bash - \
-  && apt-get install -y nodejs 
+  && apt-get install -y nodejs \
+  && chown -R jenkins:jenkins /usr/lib/node_modules 
+
+USER jenkins
+RUN npm install -g puppeteer
+USER root
 
 # Setup environment
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV ANDROID_SDK_HOME /opt/android-sdk-linux
+ENV ANDROID_HOME /opt/android-sdk
+ENV ANDROID_SDK_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
 RUN  /usr/local/flutter/bin/flutter doctor -v \
     && rm -rfv /flutter/bin/cache/artifacts/gradle_wrapper
+RUN chown -R jenkins:jenkins /usr/local/flutter && chgrp -R jenkins /usr/local/flutter && chown -R jenkins:jenkins /root/.pub-cache && chmod 755 /root && chown -R jenkins /opt/android-sdk
 
 # Setting flutter and dart-sdk to PATH so they are accessible from terminal
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
-
-# Correct permissions
-RUN chown -R jenkins /usr/local/flutter
 
 # Install lcov to convert lcovinfo to HTML
 RUN apt-get update -qq -y && apt-get install lcov -y
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
+
+# Set JDK8 as default
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk8u232-b09/bin/java 1
+RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk8u232-b09/bin/javac 1
 
 # Standard SSH port
 EXPOSE 22
