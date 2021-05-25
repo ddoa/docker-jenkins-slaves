@@ -79,16 +79,11 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # JDK15
-RUN \
-  apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
+RUN apt-get install -y wget
+RUN mkdir /usr/lib/jvm && wget https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz && tar xvzf openjdk-15.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm
+ENV JAVA_HOME /usr/lib/jvm/jdk15.0.2/
+ENV PATH ${PATH}:{JAVA_HOME}/bin
+
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
@@ -108,7 +103,7 @@ RUN chown -R jenkins:jenkins /home/jenkins
 RUN apt-get update && apt-get install -y python make g++
 
 # Add docker-client to be able to build, run etc. docker containers
-RUN apt-get install -y docker
+RUN apt-get install -y docker libgbm-dev
 
 EXPOSE 22
 
