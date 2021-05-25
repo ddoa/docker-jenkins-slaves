@@ -105,6 +105,10 @@ RUN apt-get update && apt-get install -y python make g++
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker libgbm-dev
 
+# Set JDK15 as default
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk15.0.2/bin/java 1
+RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk15.0.2/bin/javac 1
+
 EXPOSE 22
 
 # Default command
