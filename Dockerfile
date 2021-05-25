@@ -81,7 +81,7 @@ WORKDIR /usr/src/app
 # JDK15
 RUN apt-get install -y wget
 RUN mkdir /usr/lib/jvm && wget https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz && tar xvzf openjdk-15.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm
-ENV JAVA_HOME /usr/lib/jvm/jdk15.0.2/
+ENV JAVA_HOME /usr/lib/jvm/jdk-15.0.2/
 ENV PATH ${PATH}:{JAVA_HOME}/bin
 
 
@@ -106,8 +106,8 @@ RUN apt-get update && apt-get install -y python make g++
 RUN apt-get install -y docker libgbm-dev
 
 # Set JDK15 as default
-RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk15.0.2/bin/java 1
-RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk15.0.2/bin/javac 1
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.2/bin/java 1
+RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.2/bin/javac 1
 
 EXPOSE 22
 
