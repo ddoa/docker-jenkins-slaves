@@ -19,16 +19,17 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
+# JDK15
+RUN apt-get update && apt-get install -y wget
+RUN mkdir /usr/lib/jvm && wget https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz && tar xvzf openjdk-15.0.2_linux-x64_bin.tar.gz -C /usr/lib/jvm
+
+# Install OpenJDK8
 RUN \
-  apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
+    cd /opt && wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz && \
+    cd /usr/lib/jvm && tar xvzf /opt/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz
+
+ENV JAVA_HOME /usr/lib/jvm/jdk8u232-b09/
+ENV PATH ${PATH}:{JAVA_HOME}/bin
 
 
 # Define working directory.
@@ -43,14 +44,14 @@ RUN apt-get update && apt-get install -y git
 #Atlassian Specific
 RUN apt-get -q update && \
   apt-get install -y apt-transport-https && \
-  sh -c 'echo "deb https://packages.atlassian.com/atlassian-sdk-deb stable contrib" >>/etc/apt/sources.list' && \
+  sh -c 'echo "deb https://packages.atlassian.com/debian/atlassian-sdk-deb/ stable contrib" >>/etc/apt/sources.list' && \
   wget https://packages.atlassian.com/api/gpg/key/public && \
   apt-key add public && \
   apt-get -q update && \
   apt-get install -y atlassian-plugin-sdk
 
 # Add this property to Jenkins ENV_INJECT plugin properties because .bashrc and other properties don't get loaded or are loaded for the root user instead of the jenkins user
-ENV ATLAS_HOME /usr/share/atlassian-plugin-sdk-8.2.2
+ENV ATLAS_HOME /usr/share/atlassian-plugin-sdk-8.2.8
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
@@ -60,6 +61,10 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
+
+# Set JDK8 as default
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk8u232-b09/bin/java 1
+RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk8u232-b09/bin/javac 1
 
 # Standard SSH port
 EXPOSE 22
