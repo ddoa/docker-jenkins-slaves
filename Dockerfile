@@ -60,7 +60,8 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Add docker-client to be able to build, run etc. docker containers
-RUN apt-get install -y docker libnss3-dev
+RUN apt-get install -y docker libnss3-dev libatk-bridge2.0-0 libxss1 libasound2 libgtk-3-0 libx11-6 libx11-xcb1 libdrm-dev libgbm-dev
+
 
 # Set JDK8 as default
 RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk8u232-b09/bin/java 1
