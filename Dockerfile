@@ -1,5 +1,6 @@
 # This Dockerfile is used to build an image containing basic stuff to be used as a Jenkins slave build node.
 FROM debian:latest
+RUN apt-get update && apt-get upgrade -y
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
@@ -24,11 +25,11 @@ RUN \
   echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
   apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
+  echo oracle-java17-installer shared/accepted-oracle-license-v1-3 select true | /usr/bin/debconf-set-selections && \
   apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
+  apt-get install -y oracle-java17-installer oracle-java17-set-default && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
+  rm -rf /var/cache/oracle-jdk17-installer
 
 # Define working directory.
 WORKDIR /data
