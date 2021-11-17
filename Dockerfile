@@ -30,6 +30,13 @@ RUN \
   apt-get install -y oracle-java17-installer oracle-java17-set-default && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/oracle-jdk17-installer
+  
+RUN \
+  apt-get -q update && \
+  apt-get install curl -y && \
+  cd usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
 
 # Define working directory.
 WORKDIR /data
