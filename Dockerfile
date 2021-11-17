@@ -70,6 +70,10 @@ RUN wget https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
 
+# Make Java15 the default
+RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
+RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
+
 # Standard SSH port
 EXPOSE 22
 
