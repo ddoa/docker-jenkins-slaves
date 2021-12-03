@@ -21,14 +21,10 @@ ENV LC_ALL en_US.UTF-8
 
 RUN \
   apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
+  apt-get install curl -y && \
+  mkdir /usr/lib/jvm && cd /usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
 
 # Define working directory.
 WORKDIR /data
@@ -46,26 +42,30 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 RUN apt-get -y install libgd3
-RUN apt-get -q update && apt-get -y install php7.3 \
-  php-pear php7.3-cgi php7.3-cli php7.3-common php7.3-fpm \
-  php7.3-gd php7.3-json php7.3-mysql php7.3-readline php7.3-xml \
-  default-mysql-client php7.3-sqlite3
+RUN apt-get -q update && apt-get -y install php7.4 \
+  php-pear php7.4-cgi php7.4-cli php7.4-common php7.4-fpm \
+  php7.4-gd php7.4-json php7.4-mysql php7.4-readline php7.4-xml \
+  default-mysql-client php7.4-sqlite3
 
-RUN apt-get remove libcurl4 && apt-get -y install curl
+RUN apt-get remove -y libcurl4 && apt-get -y install curl
 
 RUN apt-get -q update && \
-  apt-get -y install php7.3-curl php7.3-mbstring bzip2 libmcrypt-dev php7.3-dev
+  apt-get -y install php7.4-curl php7.4-mbstring bzip2 libmcrypt-dev php7.4-dev
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
 
-RUN pecl channel-update pecl.php.net && pecl install mcrypt-1.0.2
+RUN pecl channel-update pecl.php.net && pecl install mcrypt-1.0.4
 
-RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/cli/conf.d/mcrypt.ini"
+RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.4/cli/conf.d/mcrypt.ini"
 
 RUN ln -s /data/composer.phar /usr/local/bin/composer
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
+
+# Make Java15 the default
+RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
+RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
 
 # Standard SSH port
 EXPOSE 22
