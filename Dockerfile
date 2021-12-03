@@ -1,10 +1,11 @@
 # This Dockerfile is used to build an image containing basic stuff to be used as a Jenkins slave build node.
-FROM debian:testing-20181011
+FROM debian:latest
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Add locales after locale-gen as needed
 # Upgrade packages on image
 # Preparations for sshd
+
 run apt-get -q update &&\
     apt-get install -y locales && \
     DEBIAN_FRONTEND="noninteractive" apt-get -q upgrade -y -o Dpkg::Options::="--force-confnew" --no-install-recommends &&\
@@ -48,7 +49,7 @@ RUN set -ex \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 12.2.0
+ENV NODE_VERSION 17.2.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -62,22 +63,16 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 RUN mkdir "/home/jenkins/.npm-packages"
 RUN chown jenkins /home/jenkins/.npm-packages
 
-# JDK13
 RUN \
   apt-get -q update && \
-  apt-get install -y wget && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java13-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java13-installer oracle-java13-set-default && \
-  rm -rf /var/lib/apt/lists/* && \/bin/bash -c '{ cd /tmp; rm -rf cppcheck-build cppcheck-1.87; curl -L https://github.com/danmar/cppcheck/archive/1.87.tar.gz | tar xz; mkdir cppcheck-build; cd cppcheck-build; cmake ../cppcheck-1.87/ -DCMAKE_BUILD_TYPE=Release -DHAVE_RULES=OFF; make; make install; cd; rm -rf /tmp/cppcheck-build /tmp/cppcheck-1.87;}' && \
-  rm -rf /var/cache/oracle-jdk13-installer
+  apt-get install curl -y && \
+  mkdir /usr/lib/jvm && cd /usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
 
 # GCC/G++
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -q update && apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends gcc-7 g++-7 build-essential
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -q update && apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends gcc-9 g++-9 build-essential
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 --slave /usr/bin/g++ g++ /usr/bin/g++-9
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
@@ -86,6 +81,10 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 #Python
 RUN apt-get -q update && apt-get -y install python libfontconfig
+
+# Make Java15 the default
+RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
+RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
 
 # Standard SSH port
 EXPOSE 22
