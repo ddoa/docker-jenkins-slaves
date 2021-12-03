@@ -21,15 +21,10 @@ ENV LC_ALL en_US.UTF-8
 
 RUN \
   apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
-
+  apt-get install wget curl -y && \
+  mkdir /usr/lib/jvm && cd /usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
 
 # Define working directory.
 WORKDIR /data
@@ -48,7 +43,7 @@ COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
 # Install Scala
 ENV SCALA_VERSION 2.13.3
-ENV SBT_VERSION 1.4.1
+ENV SBT_VERSION 1.5.5
 ENV SBT_URL http://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb
 ENV SCALA_URL http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz
 
@@ -57,17 +52,22 @@ RUN \
   echo 'export PATH=~/scala-$SCALA_VERSION/bin:$PATH' >> /root/.bashrc
 
 # Install sbt
-RUN \
-  curl -L -o sbt.deb $SBT_URL && \
-  dpkg -i sbt.deb && \
-  rm sbt.deb && \
+RUN apt-get update && \
+  apt-get install apt-transport-https curl gnupg -yqq && \
+  echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list && \
+  echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list && \
+  curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import && \
+  chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg && \
   apt-get update && \
-  apt-get install sbt && \
-  sbt sbtVersion
-
+  apt-get install sbt
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
+
+# Make Java15 the default
+RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
+RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
+
 
 # Standard SSH port
 EXPOSE 22
