@@ -21,16 +21,10 @@ ENV LC_ALL en_US.UTF-8
 
 RUN \
   apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java15-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java15-installer oracle-java15-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk15-installer
-
-
+  apt-get install curl -y && \
+  mkdir /usr/lib/jvm && cd /usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
 # Define working directory.
 WORKDIR /data
 
@@ -45,10 +39,15 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
-RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python-pip python3-dev python3-pip python-virtualenv python3-virtualenv && pip install pytest-cov
+RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python3-dev python3-pip python3-virtualenv && pip install pytest-cov
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
+
+# Make Java15 the default
+RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
+RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
+
 
 # Standard SSH port
 EXPOSE 22
