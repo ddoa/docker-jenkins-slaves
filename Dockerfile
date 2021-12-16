@@ -28,7 +28,7 @@ RUN set -xe \
 
 # Jenkins configuration
 # Check for and install new updates
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 
 # Install SSH, dockerfile when build runs on debian, but does not have OpenSSH pre-installed.
 RUN apt-get install openssh-server -y
