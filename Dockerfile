@@ -7,8 +7,10 @@ FROM erlang:22
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Elixir expects utf8.
-ENV ELIXIR_VERSION="v1.12.3" \
-	LANG=C.UTF-8
+ENV ELIXIR_VERSION="v1.12.3"
+ENV LC_ALL en_US.UTF-8 
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en   
 
 # Install Elixir.
 RUN set -xe \
