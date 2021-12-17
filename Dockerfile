@@ -7,8 +7,10 @@ FROM erlang:22
 MAINTAINER Rody Middelkoop <rody.middelkoop@gmail.com>
 
 # Elixir expects utf8.
-ENV ELIXIR_VERSION="v1.12.3" \
-	LANG=C.UTF-8
+ENV ELIXIR_VERSION="v1.12.3"
+ENV LC_ALL en_US.UTF-8 
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en   
 
 # Install Elixir.
 RUN set -xe \
@@ -26,7 +28,7 @@ RUN set -xe \
 
 # Jenkins configuration
 # Check for and install new updates
-RUN apt-get upgrade && apt-get update
+RUN apt-get update && apt-get upgrade -y
 
 # Install SSH, dockerfile when build runs on debian, but does not have OpenSSH pre-installed.
 RUN apt-get install openssh-server -y
