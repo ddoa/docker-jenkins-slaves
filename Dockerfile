@@ -56,7 +56,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 
 RUN pecl channel-update pecl.php.net && pecl install mcrypt-1.0.4
 
-RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.4/cli/conf.d/mcrypt.ini"
+RUN bash -c "echo extension=mcrypt.so > /etc/php/7.4/cli/conf.d/mcrypt.ini"
 
 RUN ln -s /data/composer.phar /usr/local/bin/composer
 
@@ -71,4 +71,4 @@ RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-al
 EXPOSE 22
 
 # Default command
-CMD ["/usr/sbin/sshd", "-D"]
+#CMD ["/usr/sbin/sshd", "-D"]
