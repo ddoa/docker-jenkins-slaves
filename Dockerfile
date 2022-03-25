@@ -53,4 +53,4 @@ RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-al
 EXPOSE 22
 
 # Default command
-CMD ["/usr/sbin/sshd", "-D"]
+#CMD ["/usr/sbin/sshd", "-D"]
