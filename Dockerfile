@@ -102,4 +102,4 @@ RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk8u232-b09
 EXPOSE 22
 
 # Default command
-CMD ["/usr/sbin/sshd", "-D"]
+#CMD ["/usr/sbin/sshd", "-D"]
