@@ -32,14 +32,14 @@ WORKDIR /data
 RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
     echo "jenkins:jenkins" | chpasswd
 
-RUN apt-get update && apt-get install -y git gcc make
+RUN apt-get update && apt-get install -y git gcc make unixodbc-dev
 
 # Sonar Scanner
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
 
-RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python3-dev python3-pip python3-virtualenv && pip install pytest-cov
+RUN apt-get -q update && apt-get install -y software-properties-common software-properties-common python3 python3-dev python3-pip python3-virtualenv && pip install pytest-cov && pip install unittest-xml-reporting coverage
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
