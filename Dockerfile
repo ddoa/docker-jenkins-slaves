@@ -98,6 +98,15 @@ RUN apt-get install -y docker
 RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk8u232-b09/bin/java 1
 RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk8u232-b09/bin/javac 1
 
+# Added Kotlin
+RUN cd /usr/lib && \
+    wget https://github.com/JetBrains/kotlin/releases/download/v1.6.20/kotlin-compiler-1.6.20.zip && \
+    unzip kotlin-compiler-*.zip && \
+    rm kotlin-compiler-*.zip && \
+    rm -f kotlinc/bin/*.bat
+
+ENV PATH $PATH:/usr/lib/kotlinc/bin
+
 # Standard SSH port
 EXPOSE 22
 
