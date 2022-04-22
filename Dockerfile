@@ -1,10 +1,5 @@
 FROM debian:bookworm
 
-# the user that will be used in the container
-# for using variables/arguments in a dockerfile: https://docs.docker.com/engine/reference/builder/#arg
-# Running this dockerfile with USER=aUserName will will create a user with that name and corresponding home directoy 
-ARG USER=student
-
 # See: 
 # 	Why not: https://docs.docker.com/engine/faq/#why-is-debian_frontendnoninteractive-discouraged-in-dockerfiles
 # 	But how you may use it: https://github.com/moby/moby/issues/4032 for more info.
@@ -13,10 +8,11 @@ ARG USER=student
 # the "apt-get install", should just uses it in that command. Does not seem to work?
 ENV DEBIAN_FRONTEND=noninteractive
 
-# First add the user so that one can put anything in the home directory
-# If any mounts are shared between the host and the container one look at the numeric UID's
-# so that the numeric UID of both users are the same 
-RUN useradd --create-home --shell /bin/bash $USER && yes password | passwd $USER	
+WORKDIR /data
+
+# Set user jenkins to the image
+RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
+    echo "jenkins:jenkins" | chpasswd
 
 # INclude contrib an non-free
 RUN echo "deb http://ftp.nl.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list
@@ -70,12 +66,6 @@ RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.4/wxWidge
   tar xvjf wxWidgets-3.1.4.tar.bz2 -C /usr/src && \
   cd /usr/src/wxWidgets-3.1.4 && ./configure && make && make install && ldconfig
   
-# Optionally: Download the standard OSM-ProjectTemplate
-#RUN mkdir -p /home/student/src && cd /home/student/src && git clone https://bitbucket.aimsites.nl/scm/esdd/osm-projecttemplate.git
-#RUN chown -R student.student /home/student/
-#RUN cd /home/student/src/osm-projecttemplate/linux && ../configure --with-cxx=17 && make
-#RUN cd /home/student/src/osm-projecttemplate/linux && ./TestExe2/testexe2 
-
 # Install Java 15 so the image can be used by Jenkins as a worker
 RUN \
   apt-get -q update && \
@@ -88,9 +78,9 @@ RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bi
 RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
 
 # Install Sonar Scanner so the image can run a local SQ analysis
-# Sonar Scanner
-RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt && rm sonar-scanner-2.8.zip
-COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
+
+COPY "sonar-scanner.properties" /opt/sonar-scanner-4.5.0.2216/conf
 
 # Update the database so we can find stuff. Keep this as the last command.
 RUN updatedb
