@@ -11,8 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /data
 
 # Set user jenkins to the image
-RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
-    echo "jenkins:jenkins" | chpasswd
+RUN useradd -m -d /home/jenkins -s /bin/bash jenkins && echo "jenkins:jenkins" | chpasswd
 
 # INclude contrib an non-free
 RUN echo "deb http://ftp.nl.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list
@@ -80,7 +79,10 @@ RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-al
 # Install Sonar Scanner so the image can run a local SQ analysis
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip --quiet && unzip sonar-scanner-cli-4.7.0.2747-linux.zip -d /opt
 
-COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747/conf
+COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747-linux/conf
+
+# Create symbolic link for boost timer when multi threading is used
+RUN cd /usr/lib/x86_64-linux-gnu && ln -s libboost_timer.so libboost_timer_mt.so
 
 # Update the database so we can find stuff. Keep this as the last command.
 RUN updatedb
