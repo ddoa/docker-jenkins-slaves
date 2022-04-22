@@ -78,9 +78,9 @@ RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bi
 RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
 
 # Install Sonar Scanner so the image can run a local SQ analysis
-RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip --quiet && unzip sonar-scanner-cli-4.7.0.2747-linux.zip -d /opt
 
-COPY "sonar-scanner.properties" /opt/sonar-scanner-4.5.0.2216/conf
+COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747/conf
 
 # Update the database so we can find stuff. Keep this as the last command.
 RUN updatedb
