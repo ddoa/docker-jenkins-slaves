@@ -82,7 +82,7 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747-linux/conf
 
 # Create symbolic link for boost timer when multi threading is used
-RUN cd /usr/lib/x86_64-linux-gnu && ln -s libboost_timer.so libboost_timer_mt.so
+RUN cd /usr/lib/x86_64-linux-gnu && ln -s libboost_timer.so libboost_timer-mt.so
 
 # Update the database so we can find stuff. Keep this as the last command.
 RUN updatedb
