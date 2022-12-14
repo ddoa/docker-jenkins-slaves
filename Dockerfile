@@ -22,19 +22,13 @@ ENV LC_ALL en_US.UTF-8
 
 RUN \
   apt-get -q update && \
-  echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list && \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A && \
-  apt-get -q update && \
-  echo oracle-java17-installer shared/accepted-oracle-license-v1-3 select true | /usr/bin/debconf-set-selections && \
-  apt-get update && \
-  apt-get install -y oracle-java17-installer oracle-java17-set-default && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk17-installer
+  apt-get install wget -y && \
+  wget https://download.oracle.com/java/19/latest/jdk-19_linux-x64_bin.deb && \
+  apt-get -qqy install ./jdk-19_linux-x64_bin.deb
   
 RUN \
   apt-get -q update && \
-  apt-get install curl -y && \
-  cd usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  cd usr/lib/jvm &&  wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
   tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
   rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
 
