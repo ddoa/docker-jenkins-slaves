@@ -45,11 +45,14 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -o APT::Immediate-Co
 	wget	\
 	libboost-all-dev	\
 	bear	\
-	clang	\
-	clang-format	\
-	clang-tidy	\
-	clang-tools	\	
+	clang-15	\
+	clang-format-15	\
+	clang-tidy-15	\
+	clang-tools-15	\	
 	locales	
+
+# Change the version of clang to clang-15
+RUN cd /usr/lib/llvm-15/bin; for f in *; do rm -f /usr/bin/$f;  ln -s ../lib/llvm-15/bin/$f /usr/bin/$f; done
 
 # Install some non-X-Windows utilities	
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
