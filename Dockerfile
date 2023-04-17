@@ -39,6 +39,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -o APT::Immediate-Co
 	linux-perf	\
 	doxygen	\
 	doxygen-gui\
+	graphviz	\
 	cmake	\
 	git	\
 	wget	\
