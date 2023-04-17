@@ -13,7 +13,7 @@ WORKDIR /data
 # Set user jenkins to the image
 RUN useradd -m -d /home/jenkins -s /bin/bash jenkins && echo "jenkins:jenkins" | chpasswd
 
-# INclude contrib an non-free
+# Include contrib and non-free
 RUN echo "deb http://ftp.nl.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list
 
 # Installing as the first package in the first layer prohibits warnings in the remainder
@@ -47,9 +47,10 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -o APT::Immediate-Co
 	clang	\
 	clang-format	\
 	clang-tidy	\
-	clang-tools
-	
-# Install some no-X-Windows utilities	
+	clang-tools	\	
+	locales	
+
+# Install some non-X-Windows utilities	
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	mc	\
 	locate	\
@@ -60,10 +61,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	libgtk-3-dev
 
-# Download, compile and install wxWidgets
-RUN wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.4/wxWidgets-3.1.4.tar.bz2 && \
-  tar xvjf wxWidgets-3.1.4.tar.bz2 -C /usr/src && \
-  cd /usr/src/wxWidgets-3.1.4 && ./configure && make && make install && ldconfig
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+	libwxgtk3.2-1	\
+	libwxgtk3.2-dev  
   
 # Install Java 15 so the image can be used by Jenkins as a worker
 RUN \
@@ -80,9 +80,6 @@ RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-al
 RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip --quiet && unzip sonar-scanner-cli-4.7.0.2747-linux.zip -d /opt
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747-linux/conf
-
-# Create symbolic link for boost timer when multi threading is used
-RUN cd /usr/lib/x86_64-linux-gnu && ln -s libboost_timer.so libboost_timer-mt.so
 
 # Update the database so we can find stuff. Keep this as the last command.
 RUN updatedb
