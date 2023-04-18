@@ -58,12 +58,12 @@ ENV PATH ${PATH}:{JAVA_HOME}/bin
 
 # Install Android SDK
 RUN mkdir -p .android && touch .android/repositories.cfg
-RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip 
+RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
 RUN mkdir /opt/android-sdk 
-RUN unzip sdk-tools.zip && mv tools /opt/android-sdk/tools && rm sdk-tools.zip
+RUN unzip sdk-tools.zip && mv cmdline-tools /opt/android-sdk/tools && rm sdk-tools.zip
 RUN cd /opt/android-sdk/tools/bin && yes | ./sdkmanager --licenses
 
-RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && cd /opt/android-sdk/tools/bin && ./sdkmanager "build-tools;29.0.3" "patcher;v4" "platform-tools" "platforms;android-29" "platforms;android-30" "tools" 
+RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && cd /opt/android-sdk/tools/bin && ./sdkmanager "cmdline-tools;9.0" "patcher;v4" "platform-tools" "platforms;android-29" "platforms;android-30" "tools" 
 RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && echo yes | /opt/android-sdk/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" && echo yes | /opt/android-sdk/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
 
 #Install npm
@@ -100,7 +100,7 @@ RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk8u232-b09
 
 # Added Kotlin
 RUN cd /usr/lib && \
-    wget https://github.com/JetBrains/kotlin/releases/download/v1.6.20/kotlin-compiler-1.6.20.zip && \
+    wget https://github.com/JetBrains/kotlin/releases/download/v1.8.0/kotlin-compiler-1.8.0.zip && \
     unzip kotlin-compiler-*.zip && \
     rm kotlin-compiler-*.zip && \
     rm -f kotlinc/bin/*.bat
