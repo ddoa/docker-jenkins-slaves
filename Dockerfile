@@ -48,23 +48,23 @@ RUN apt-get update && apt-get install -y unzip expect sudo && wget https://servi
 ENV GRADLE_HOME /opt/gradle-4.4
 ENV PATH $PATH:$GRADLE_HOME/bin
 
-# Install OpenJDK8
+# Install OpenJDK11 (minimum version to use together with Android)
 RUN \
-    cd /opt && wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz && \
-    cd /usr/lib/jvm && tar xvzf /opt/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz
+    cd /opt && wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz && \
+    cd /usr/lib/jvm && tar xvzf /opt/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz
 
-ENV JAVA_HOME /usr/lib/jvm/jdk8u232-b09/
+ENV JAVA_HOME /usr/lib/jvm/jdk-11.0.9.1+1
 ENV PATH ${PATH}:{JAVA_HOME}/bin
 
 # Install Android SDK
 RUN mkdir -p .android && touch .android/repositories.cfg
 RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
 RUN mkdir /opt/android-sdk 
-RUN unzip sdk-tools.zip && mv cmdline-tools /opt/android-sdk/tools && rm sdk-tools.zip
-RUN cd /opt/android-sdk/tools/bin && yes | ./sdkmanager --licenses
+RUN unzip sdk-tools.zip && mv cmdline-tools latest && mkdir cmdline-tools && mv latest cmdline-tools && mv cmdline-tools /opt/android-sdk && rm sdk-tools.zip
+RUN cd /opt/android-sdk/cmdline-tools/latest/bin && yes | ./sdkmanager --licenses
 
-RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && cd /opt/android-sdk/tools/bin && ./sdkmanager "cmdline-tools;9.0" "patcher;v4" "platform-tools" "platforms;android-29" "platforms;android-30" "tools" 
-RUN export JAVA_HOME="/usr/lib/jvm/jdk8u232-b09/" && echo yes | /opt/android-sdk/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" && echo yes | /opt/android-sdk/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+RUN export JAVA_HOME="/usr/lib/jvm/jdk-11.0.9.1+1" && cd /opt/android-sdk/cmdline-tools/latest/bin && ./sdkmanager "cmdline-tools;9.0" "patcher;v4" "platform-tools" "platforms;android-29" "platforms;android-30" "platforms;android-33" "platforms;android-28" "tools" 
+RUN export JAVA_HOME="/usr/lib/jvm/jdk-11.0.9.1+1" && echo yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" && echo yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
 
 #Install npm
 RUN apt-get install -y curl \
@@ -79,7 +79,7 @@ USER root
 # Setup environment
 ENV ANDROID_HOME /opt/android-sdk
 ENV ANDROID_SDK_HOME /opt/android-sdk
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/cmdline-tools/latest/bin
 
 RUN  /usr/local/flutter/bin/flutter doctor -v \
     && rm -rfv /flutter/bin/cache/artifacts/gradle_wrapper
@@ -95,8 +95,8 @@ RUN apt-get update -qq -y && apt-get install lcov -y
 RUN apt-get install -y docker
 
 # Set JDK8 as default
-RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk8u232-b09/bin/java 1
-RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk8u232-b09/bin/javac 1
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-11.0.9.1+1/bin/java 1
+RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-11.0.9.1+1/bin/javac 1
 
 # Added Kotlin
 RUN cd /usr/lib && \
