@@ -94,7 +94,7 @@ RUN apt-get update -qq -y && apt-get install lcov -y
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker
 
-# Set JDK8 as default
+# Set JDK11 as default
 RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-11.0.9.1+1/bin/java 1
 RUN update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-11.0.9.1+1/bin/javac 1
 
@@ -106,6 +106,11 @@ RUN cd /usr/lib && \
     rm -f kotlinc/bin/*.bat
 
 ENV PATH $PATH:/usr/lib/kotlinc/bin
+
+# Provide JDK8 for backwards compatibility
+RUN \
+    cd /opt && wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz && \
+    cd /usr/lib/jvm && tar xvzf /opt/OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz
 
 # Standard SSH port
 EXPOSE 22
