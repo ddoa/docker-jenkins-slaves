@@ -78,7 +78,6 @@ USER root
 
 # Setup environment
 ENV ANDROID_HOME /opt/android-sdk
-ENV ANDROID_SDK_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/cmdline-tools/latest/bin
 
 RUN  /usr/local/flutter/bin/flutter doctor -v \
