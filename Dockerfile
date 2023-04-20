@@ -75,9 +75,9 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get -q update && apt-get -q install -y 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 --slave /usr/bin/g++ g++ /usr/bin/g++-9
 
 # Sonar Scanner
-RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip --quiet && unzip sonar-scanner-2.8.zip -d /opt
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip --quiet && unzip sonar-scanner-cli-4.5.0.2216.zip -d /opt
 
-COPY "sonar-scanner.properties" /opt/sonar-scanner-2.8/conf
+COPY "sonar-scanner.properties" /opt/sonar-scanner-4.5.0.2216/conf
 
 #Python
 RUN apt-get -q update && apt-get -y install python libfontconfig
