@@ -90,6 +90,9 @@ RUN chown -R jenkins:jenkins /home/jenkins
 #Python
 RUN apt-get -q update && apt-get -y install python libfontconfig
 
+# GTK LIB for Puppeteer/Chromium
+RUN apt-get install -y libgbm-dev
+
 # Make Java15 the default
 RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
 RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
