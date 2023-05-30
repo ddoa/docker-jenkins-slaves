@@ -121,10 +121,21 @@ RUN updatedb
 # define working directory
 WORKDIR /data/
 
+RUN \
+  apt-get -q update && \
+  apt-get install curl -y && \
+  cd /usr/lib/jvm &&  curl -O https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  tar -xvzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+  rm -rf openjdk-15.0.1_linux-x64_bin.tar.gz
+
+RUN update-alternatives  --install /usr/bin/java java /usr/lib/jvm/jdk-15.0.1/bin/java 1000 && update-alternatives  --install /usr/bin/javac javac /usr/lib/jvm/jdk-15.0.1/bin/javac 1001
+RUN update-alternatives --set java /usr/lib/jvm/jdk-15.0.1/bin/java && update-alternatives --set javac /usr/lib/jvm/jdk-15.0.1/bin/javac
+
+# Install Sonar Scanner so the image can run a local SQ analysis
+RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip --quiet && unzip sonar-scanner-cli-4.7.0.2747-linux.zip -d /opt
+
+COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747-linux/conf
+
 # setup entrypoint
 ENV ROS_DISTRO humble
-COPY ./ros_entrypoint.sh /
-RUN chmod +x /ros_entrypoint.sh
-ENTRYPOINT ["/ros_entrypoint.sh"]
-
-CMD ["bash"]
+RUN echo 'source "/opt/ros/$ROS_DISTRO/setup.bash"' >> /home/$USERNAME/.bashrc
