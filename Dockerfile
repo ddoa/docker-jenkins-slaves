@@ -6,7 +6,7 @@ LABEL maintainer="ESD team"
 # the user that will be used in the container
 # for using variables/arguments in a dockerfile: https://docs.docker.com/engine/reference/builder/#arg
 # Running this dockerfile with USERNAME=aUserName will will create a user with that name and corresponding home directoy 
-ARG USERNAME=user
+ARG USERNAME=jenkins
 
 # First add the user so that one can put anything in the home directory
 # If any mounts are shared between the host and the container one look at the numeric UID's
