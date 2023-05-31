@@ -136,6 +136,10 @@ RUN apt-get update && apt-get install -y unzip wget bzip2 && wget https://binari
 
 COPY "sonar-scanner.properties" /opt/sonar-scanner-cli-4.7.0.2747-linux/conf
 
+RUN ( \
+    echo 'jenkins ALL=(ALL) NOPASSWD:ALL'; \
+  ) > /etc/sudoers
+
 # setup entrypoint
 ENV ROS_DISTRO humble
 RUN echo 'source "/opt/ros/$ROS_DISTRO/setup.bash"' >> /home/$USERNAME/.bashrc
