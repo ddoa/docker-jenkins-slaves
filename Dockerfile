@@ -46,7 +46,7 @@ RUN gpg --keyserver hkps://keys.openpgp.org --recv-keys 108F52B48DB57BB0CC439B29
 RUN gpg --keyserver hkps://keys.openpgp.org --recv-keys B9E2F5981AA6E0CD28160D9FF13993A75599653C
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 14.15.0
+ENV NODE_VERSION 18.13.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -87,7 +87,7 @@ RUN chown -R jenkins:jenkins /home/jenkins
 
 # Standard SSH port
 
-RUN apt-get update && apt-get install -y python make g++
+RUN apt-get update && apt-get install -y python3 make g++
 
 # Add docker-client to be able to build, run etc. docker containers
 RUN apt-get install -y docker libgbm-dev
